@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5efe6" />
+    <link rel="stylesheet" href="/mobile/styles.css" />
+    <link rel="manifest" href="/mobile/manifest.webmanifest" />
+    <!-- service-worker.js 只负责手机静态资源缓存。 -->
+    <title>知己手记 · 手机投递</title>
+  </head>
+  <body>
+    <main>
+      <h1>知己手记 · 手机投递</h1>
+      <p>仅上传，不读取电脑端写作库。电脑关机时仍可记录，开机后同步。</p>
+      <form id="submission-form">
+        <label for="kind">类型</label>
+        <select id="kind" name="kind">
+          <option value="diary">日记</option>
+          <option value="fragment">片段</option>
+          <option value="work">作品</option>
+        </select>
+        <label for="body">正文</label>
+        <textarea id="body" name="body" required></textarea>
+        <label for="image-input">插入图片</label>
+        <input id="image-input" name="image" type="file" accept="image/*" />
+        <ul id="attachment-list" aria-label="已添加图片"></ul>
+        <button id="submit-button" type="submit">保存到待发送箱</button>
+        <button id="cancel-edit" type="button" hidden>取消编辑</button>
+      </form>
+      <button id="sync-button" type="button">立即同步</button>
+      <p id="status" aria-live="polite">内容会先保存在本机，电脑开机后可同步。</p>
+      <ul id="outbox-list" aria-label="待发送内容"></ul>
+    </main>
+    <script type="module" src="/mobile/app.js"></script>
+  </body>
+</html>

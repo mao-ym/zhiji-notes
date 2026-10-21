@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "private-writing-companion"
+version = "0.1.0"
+description = "本地优先、懂你的 AI 写作伙伴"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "httpx[socks]",
+    "keyring",
+    "pytest",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+writing-companion = "writing_companion.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["writing_companion*"]
+
+[tool.setuptools.package-data]
+writing_companion = ["web/*", "mobile/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--basetemp=.tmp_pytest"
+cache_dir = ".tmp_pytest_cache"

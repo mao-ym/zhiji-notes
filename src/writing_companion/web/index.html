@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>知己手记</title>
+    <link rel="stylesheet" href="/static/styles.css?v=20260810-memory-cursor-retry-5" />
+  </head>
+  <body>
+    <main class="shell" data-current-kind="diary">
+      <header class="topbar">
+        <div class="brand-block">
+          <p class="eyebrow">Your AI Writing Companion</p>
+          <h1>知己手记</h1>
+          <p id="greeting-line" class="greeting-line">写下今天，让知己慢慢懂你。</p>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" id="companion-open-button" class="quiet-button">
+            陪我聊聊
+          </button>
+          <form id="search-form" class="search-box" role="search" aria-label="本地全文搜索">
+            <label for="search-query">搜索</label>
+            <input id="search-query" name="q" type="search" placeholder="搜索文档、对话和记忆" />
+            <button type="submit">搜索</button>
+          </form>
+          <div id="search-results" class="search-results" aria-live="polite" hidden>
+            <div id="search-result-list"></div>
+            <div id="search-pagination" class="pagination" aria-label="搜索结果分页"></div>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="写作区域">
+          <a href="/diary" data-route-kind="diary">日记</a>
+          <a href="/fragments" data-route-kind="fragment">片段</a>
+          <a href="/works" data-route-kind="work">作品</a>
+        </nav>
+      </header>
+
+      <section class="page-intro" aria-label="当前写作区域">
+        <span class="space-label">与你的知己一起写</span>
+        <p id="page-intro-text">把今天写下来，也让它慢慢懂你。</p>
+      </section>
+
+      <section class="library" aria-label="文档列表">
+        <article class="content-surface" data-kind="diary">
+          <div class="surface-heading">
+            <div>
+              <span class="surface-kicker">Diary · Timeline</span>
+              <h2>日记时间线</h2>
+            </div>
+            <button type="button" class="create-button" data-kind="diary">＋新建</button>
+          </div>
+          <div id="diary-list" class="timeline" aria-label="日记时间线卡片"></div>
+          <div id="document-pagination" class="pagination" aria-label="日记分页"></div>
+        </article>
+
+        <article class="content-surface" data-kind="fragment" hidden>
+          <div class="surface-heading">
+            <div>
+              <span class="surface-kicker">Fragments · Bubbles</span>
+              <h2>片段气泡</h2>
+            </div>
+            <button type="button" class="create-button" data-kind="fragment">＋新建</button>
+          </div>
+          <div id="fragment-list" class="bubble-list" aria-label="片段气泡"></div>
+          <div id="fragment-pagination" class="pagination" aria-label="片段分页"></div>
+          <p class="surface-note">片段不要求完成，只要被留下。</p>
+        </article>
+
+        <article class="content-surface" data-kind="work" hidden>
+          <div class="surface-heading">
+            <div>
+              <span class="surface-kicker">Works · In Progress</span>
+              <h2>作品标题</h2>
+            </div>
+            <button type="button" class="create-button" data-kind="work">＋新建作品</button>
+          </div>
+          <div id="work-list" class="title-list" aria-label="作品标题列表"></div>
+          <div id="work-pagination" class="pagination" aria-label="作品分页"></div>
+        </article>
+      </section>
+
+      <section id="writing-desk" class="modal-layer editor-modal" role="dialog" aria-modal="true" aria-labelledby="writing-desk-title" hidden aria-hidden="true">
+        <div class="dialog-card editor-dialog-card">
+          <div class="editor-toolbar">
+          <div>
+            <span class="surface-kicker">Writing Desk</span>
+            <label id="writing-desk-title" for="body-editor">正文</label>
+          </div>
+          <div class="editor-actions">
+            <div class="status-strip" aria-label="编辑状态">
+              <span class="status-group"><span class="status-label">保存</span><span id="save-status">已保存</span></span>
+              <span class="status-group"><span class="status-label">处理</span><span id="processing-status">未处理</span></span>
+            </div>
+            <button type="button" id="preview-button">预览</button>
+            <button type="button" id="save-button" class="primary-button">保存并处理</button>
+            <button type="button" id="editor-close-button">关闭</button>
+          </div>
+          </div>
+          <span id="memory-cursor-status" class="memory-cursor-status">记忆游标：未开始</span>
+          <div class="editor-attachment-actions">
+            <label for="attachment-input" class="attachment-button">添加图片</label>
+            <input id="attachment-input" type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden />
+            <span id="attachment-status" class="panel-status" aria-live="polite"></span>
+          </div>
+          <textarea id="body-editor" spellcheck="true" placeholder="从这里开始写。"></textarea>
+          <section id="preview-panel" class="preview-panel" aria-live="polite">
+            点击“预览”后在这里查看 Markdown 的安静预览。
+          </section>
+        </div>
+      </section>
+
+      <section id="companion-panel" class="modal-layer companion-modal" role="dialog" aria-modal="true" aria-labelledby="companion-title" hidden>
+        <div class="dialog-card companion-dialog-card">
+          <div class="surface-heading">
+          <div>
+            <span class="surface-kicker">Companion</span>
+            <h2 id="companion-title">陪聊</h2>
+          </div>
+          <button type="button" id="companion-close-button">关闭</button>
+          </div>
+          <section class="conversation-history-section" aria-labelledby="conversation-history-title">
+            <div class="subsection-heading">
+              <h3 id="conversation-history-title">历史对话</h3>
+              <button type="button" id="conversation-history-toggle">历史对话</button>
+              <button type="button" id="conversation-new-button">新建对话</button>
+            </div>
+            <div id="conversation-history" class="conversation-history" aria-live="polite" hidden></div>
+            <div id="conversation-pagination" class="pagination" aria-label="历史对话分页" hidden></div>
+          </section>
+          <div id="companion-messages" aria-live="polite"></div>
+          <p id="companion-status" class="panel-status">本地优先</p>
+          <form id="companion-form">
+            <label for="companion-input">想说什么</label>
+            <input id="companion-input" type="text" autocomplete="off" />
+            <button type="submit">发送</button>
+            <button type="button" id="companion-end-button">结束陪聊</button>
+          </form>
+        </div>
+      </section>
+
+      <button type="button" id="memory-open-button" class="memory-fab" aria-controls="memory-overlay">
+        记忆
+      </button>
+
+      <section id="api-settings-dialog" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="api-settings-title" hidden>
+        <div class="dialog-card">
+          <div class="surface-heading">
+            <div>
+              <span class="surface-kicker">First Run</span>
+              <h2 id="api-settings-title">API 设置</h2>
+            </div>
+            <button type="button" id="api-settings-close" aria-label="关闭 API 设置">×</button>
+          </div>
+          <p class="dialog-copy">密钥仅保存到 Windows 凭据管理器。完成配置后，知己手记会把 API Key 保存在其中。</p>
+          <form id="api-settings-form">
+            <label for="api-base-url">Base URL</label>
+            <input id="api-base-url" name="base_url" type="url" placeholder="https://api.openai.com/v1" required />
+            <label for="api-model">模型</label>
+            <input id="api-model" name="model" type="text" placeholder="gpt-5-mini" required />
+            <label class="checkbox-label" for="api-image-input-enabled">
+              <input id="api-image-input-enabled" name="image_input_enabled" type="checkbox" />
+              启用图片输入
+            </label>
+            <label for="api-context-limit">上下文限制</label>
+            <input id="api-context-limit" name="context_limit" type="number" min="1" value="128000" required />
+            <label for="api-daily-cost-limit">每日费用上限</label>
+            <input id="api-daily-cost-limit" name="daily_cost_limit" type="number" min="0" step="0.01" value="3.50" required />
+            <label for="api-key">API Key</label>
+            <input id="api-key" name="api_key" type="password" autocomplete="off" required />
+            <div class="form-actions">
+              <button type="submit" class="primary-button">保存 API 设置</button>
+              <button type="button" id="api-settings-test-button">连接测试</button>
+            </div>
+          </form>
+          <p id="api-settings-status" class="panel-status" aria-live="polite">API 设置尚未保存</p>
+        </div>
+      </section>
+
+      <section id="memory-overlay" class="modal-layer memory-overlay" role="dialog" aria-modal="true" aria-labelledby="memory-title" hidden>
+        <div class="dialog-card memory-dialog-card">
+          <div class="surface-heading">
+            <div>
+              <span class="surface-kicker">Memory Cabinet</span>
+              <h2 id="memory-title">记忆管理</h2>
+            </div>
+            <button type="button" id="memory-close-button" aria-label="关闭记忆管理">×</button>
+          </div>
+          <form id="friend-protocol-form" class="friend-protocol-form">
+            <h3>朋友协议</h3>
+            <p class="dialog-copy">定义陪聊时希望 AI 遵守的交流方式。</p>
+            <label for="friend-protocol-input">协议内容</label>
+            <textarea id="friend-protocol-input" rows="3" placeholder="例如：请温柔、诚实地回应我。"></textarea>
+            <button type="submit" class="primary-button">保存朋友协议</button>
+          </form>
+          <div class="memory-type-guide">
+            <div><strong>长期记忆</strong><span>稳定的偏好、背景和长期事实。</span></div>
+            <div><strong>短期记忆</strong><span>近期上下文，可能随时间被替换。</span></div>
+          </div>
+          <p id="memory-status" class="panel-status" aria-live="polite">本地记忆管理</p>
+          <div id="memory-list" class="memory-list" aria-label="记忆列表"></div>
+          <h3>30 天回收站</h3>
+          <div id="memory-trash-list" class="memory-list" aria-label="记忆回收站"></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/static/editor.js?v=20260810-memory-cursor-retry-5"></script>
+    <script type="module" src="/static/search.js?v=20260810-memory-cursor-retry-5"></script>
+    <script type="module" src="/static/memories.js?v=20260810-memory-cursor-retry-5"></script>
+    <script type="module" src="/static/conversation.js?v=20260810-memory-cursor-retry-5"></script>
+    <script type="module" src="/static/app.js?v=20260810-memory-cursor-retry-5"></script>
+  </body>
+</html>

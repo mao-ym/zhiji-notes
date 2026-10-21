@@ -1,0 +1,10 @@
+{
+  "name": "私人写作手机投递",
+  "short_name": "手机投递",
+  "start_url": "/mobile/",
+  "display": "standalone",
+  "background_color": "#f5efe6",
+  "theme_color": "#f5efe6",
+  "description": "仅向本地写作空间上传正文的 PWA",
+  "icons": []
+}

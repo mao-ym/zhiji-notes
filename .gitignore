@@ -1,0 +1,39 @@
+# Python 构建产物与虚拟环境
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# 本地资料库、日志与凭据
+*.db
+*.sqlite
+*.sqlite3
+*.log
+log/
+gpt_api.txt
+.env
+.env.*
+!.env.example
+
+# IDE、代理与本地临时目录
+.idea/
+.vscode/
+.Codex/
+.superpowers/
+.browser-verification-library*/
+.demo-library*/
+.tmp*/
+
+# 仅保留面向用户的文档与截图
+docs/plans/
+docs/superpowers/
+openspec/
